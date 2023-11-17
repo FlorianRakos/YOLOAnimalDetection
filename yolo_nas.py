@@ -20,13 +20,23 @@ import matplotlib.pyplot as plt
 import glob
 import numpy as np
 import random
+import argparse
+
+
+parser = argparse.ArgumentParser(description="Add Epochs as a parameter!",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("-e", "--epochs",  help="add number of epochs")
+args = parser.parse_args()
+config = vars(args)
+print(config)
+
 
 ROOT_DIR = ''
 train_imgs_dir = './data/train/images'
 train_labels_dir = './data/train/labels'
 val_imgs_dir = './data/val/images'
 val_labels_dir = './data/val/labels'
-checkpoint_dir = '/checkpoints'
+checkpoint_dir = './checkpoints'
 #test_imgs_dir = 'images/test'
 #test_labels_dir = 'labels/test'
 classes = ['Deer', 'Roe Deer', 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep' ]
@@ -43,9 +53,9 @@ dataset_params = {
 }
 
 # Global parameters.
-EPOCHS = 5
-BATCH_SIZE = 16
-WORKERS = 8
+EPOCHS = int(args.epochs)
+BATCH_SIZE = 32
+WORKERS = 4
 
 train_data = coco_detection_yolo_format_train(
     dataset_params={
@@ -75,21 +85,23 @@ val_data = coco_detection_yolo_format_val(
 )
 
 train_params = {
-    'silent_mode': False,
-    "average_best_models":True,
-    "warmup_mode": "linear_epoch_step",
-    "warmup_initial_lr": 1e-6,
-    "lr_warmup_epochs": 3,
-    "initial_lr": 5e-4,
-    "lr_mode": "cosine",
-    "cosine_final_lr_ratio": 0.1,
+    'silent_mode': False,   #controls whether the training process will display information and progress updates
+    "average_best_models":True,   #average the parameters of the best models
+
+    #"warmup_mode": "linear_epoch_step",
+    #"warmup_initial_lr": 1e-6,   # increasing the learning rate over a specified number of epochs
+    #"lr_warmup_epochs": 3,
+    #"initial_lr": 5e-4,
+    #"lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
+    #"cosine_final_lr_ratio": 0.1,   #ratio of the final learning rate to the initial learning rate
+
     "optimizer": "Adam",
-    "optimizer_params": {"weight_decay": 0.0001},
-    "zero_weight_decay_on_bias_and_bn": True,
-    "ema": True,
+    "optimizer_params": {"weight_decay": 0.0001},   #prevent overfitting by penalizing large weights
+    "zero_weight_decay_on_bias_and_bn": True,   #True: zero weight decay on bias and batch normalization parameters
+    "ema": True,   #Exponential Moving Average
     "ema_params": {"decay": 0.9, "decay_type": "threshold"},
     "max_epochs": EPOCHS,
-    "mixed_precision": True,
+    "mixed_precision": True,   #True: combination of 16-bit and 32-bit floating-point arithmetic to speed up training while conserving memory
     "loss": PPYoloELoss(
         use_static_assigner=False,
         num_classes=len(dataset_params['classes']),
@@ -147,11 +159,9 @@ trainer.train(
     valid_loader=val_data
 )
 
-CONFIDENCE_TRESHOLD = 0.35
-
-image = "./data/train/images/DJI_20221025074204_0001_T_809_Rotwild.png"
-
-result = list(model.predict(image, conf=CONFIDENCE_TRESHOLD))[0]
+#CONFIDENCE_TRESHOLD = 0.35
+#image = "./data/train/images/DJI_20221025074204_0001_T_809_Rotwild.png"
+#result = list(model.predict(image, conf=CONFIDENCE_TRESHOLD))[0]
 
 
 
