@@ -1,17 +1,13 @@
-
-from super_gradients.training import Trainer
-from super_gradients.training import dataloaders
+from super_gradients import init_trainer
+from super_gradients.common.object_names import Models
+from super_gradients.training import Trainer, models, dataloaders
 from super_gradients.training.dataloaders.dataloaders import coco_detection_yolo_format_train, coco_detection_yolo_format_val
-
-from super_gradients.training import models
 from super_gradients.training.losses import PPYoloELoss
-from super_gradients.training.metrics import (
-    DetectionMetrics_050,
-    DetectionMetrics_050_095
-)
+from super_gradients.training.metrics import DetectionMetrics_050, DetectionMetrics_050_095
+from super_gradients.training.utils.distributed_training_utils import setup_gpu
 from super_gradients.training.models.detection_models.pp_yolo_e import PPYoloEPostPredictionCallback
-from tqdm.auto import tqdm
 
+from tqdm.auto import tqdm
 import os
 import requests
 import zipfile
@@ -28,17 +24,20 @@ parser = argparse.ArgumentParser(description="Add Epochs as a parameter!",
 parser.add_argument("-e", "--epochs",  help="add number of epochs")
 args = parser.parse_args()
 config = vars(args)
-print(config)
 
+
+init_trainer()
+#setup_device("gpu")
+setup_gpu(num_gpus=1)
 
 ROOT_DIR = ''
-train_imgs_dir = './data/train/images'
-train_labels_dir = './data/train/labels'
-val_imgs_dir = './data/val/images'
-val_labels_dir = './data/val/labels'
-checkpoint_dir = './checkpoints'
-#test_imgs_dir = 'images/test'
-#test_labels_dir = 'labels/test'
+train_imgs_dir = '../data/train/images'
+train_labels_dir = '../data/train/labels'
+val_imgs_dir = '../data/val/images'
+val_labels_dir = '../data/val/labels'
+checkpoint_dir = '../checkpoints'
+test_imgs_dir = '../data/test/images'
+test_labels_dir = '../data/test/labels'
 classes = ['Deer', 'Roe Deer', 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep' ]
 
 dataset_params = {
@@ -47,8 +46,8 @@ dataset_params = {
     'train_labels_dir':train_labels_dir,
     'val_images_dir':val_imgs_dir,
     'val_labels_dir':val_labels_dir,
-    #'test_images_dir':test_imgs_dir,
-    #'test_labels_dir':test_labels_dir,
+    'test_images_dir':test_imgs_dir,
+    'test_labels_dir':test_labels_dir,
     'classes':classes
 }
 
@@ -88,12 +87,25 @@ train_params = {
     'silent_mode': False,   #controls whether the training process will display information and progress updates
     "average_best_models":True,   #average the parameters of the best models
 
-    #"warmup_mode": "linear_epoch_step",
-    #"warmup_initial_lr": 1e-6,   # increasing the learning rate over a specified number of epochs
-    #"lr_warmup_epochs": 3,
-    #"initial_lr": 5e-4,
-    #"lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
-    #"cosine_final_lr_ratio": 0.1,   #ratio of the final learning rate to the initial learning rate
+    "warmup_mode": "linear_epoch_step",
+    "warmup_initial_lr": 1e-6,   # increasing the learning rate over a specified number of epochs
+    "lr_warmup_epochs": 3,
+    "initial_lr": 5e-4,
+    "lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
+    "cosine_final_lr_ratio": 0.03,   #ratio of the final learning rate to the initial learning rate ---- 0.1 before
+        
+
+    # "initial_lr": 0.1,
+    # "lr_mode":"StepLRScheduler",
+    # "lr_updates": [100, 150, 200],
+    # "lr_decay_factor": 0.1,
+
+    # "lr_mode": "StepLRScheduler",
+    # "step_lr_update_freq": 2.4,
+    # "initial_lr": 0.016,
+    # "lr_warmup_epochs": 3,
+    # "warmup_initial_lr": 1e-6,
+    # "lr_decay_factor": 0.97,
 
     "optimizer": "Adam",
     "optimizer_params": {"weight_decay": 0.0001},   #prevent overfitting by penalizing large weights
@@ -156,8 +168,11 @@ trainer.train(
     model=model,
     training_params=train_params,
     train_loader=train_data,
-    valid_loader=val_data
+    valid_loader=val_data,
+    
 )
+
+
 
 #CONFIDENCE_TRESHOLD = 0.35
 #image = "./data/train/images/DJI_20221025074204_0001_T_809_Rotwild.png"

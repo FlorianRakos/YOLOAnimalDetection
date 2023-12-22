@@ -20,9 +20,9 @@ def main():
     # args = parser.parse_args()
 
 
-    model_path = "./inference_model" + "/" + os.listdir("./inference_model")[0]
-    input_folder = "./data/test"
-    output_folder = "./inference_output"
+    model_path = "../inference_model" + "/" + os.listdir("../inference_model")[0]
+    input_folder = "../data/test/images"
+    output_folder = "../inference_output"
     MODEL_ARCH = "yolo_nas_l"
     classes = ['Deer', 'Roe Deer', 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep' ]
 
