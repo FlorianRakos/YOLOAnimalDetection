@@ -1,0 +1,10 @@
+Container
+(YoloNAS)
+nvidia-docker run --gpus "device=3" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YAD --name yad3 deciai/super-gradients:3.0.7
+(YoloV8)
+nvidia-docker run --gpus "device=5" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace --name yv8_5 ultralytics/ultralytics:latest
+(YoloNAS-ultralytics)
+nvidia-docker run --gpus "device=4" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YNU --name ynu_4 ultralytics/ultralytics:latest
+
+
+tensorboard --logdir Tensorboards
