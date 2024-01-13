@@ -176,13 +176,13 @@ model = models.get(
     pretrained_weights="coco") #.to(DEVICE)
 
 
-trainer.train(
-    model=model,
-    training_params=train_params,
-    train_loader=train_data,
-    valid_loader=val_data,
-    test_loaders={"TestSet": test_data}
-)
+# trainer.train(
+#     model=model,
+#     training_params=train_params,
+#     train_loader=train_data,
+#     valid_loader=val_data,
+#     test_loaders={"TestSet": test_data}
+# )
 
 
 
