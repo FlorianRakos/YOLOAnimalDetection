@@ -1,6 +1,9 @@
 data
 checkpoints
 *.jpg
+*.png
 *.pt
 *.pth
 runs
+/allData/*
+!/allData/split.py
