@@ -3,7 +3,7 @@ import ultralytics
 ultralytics.checks()
 from ultralytics import YOLO
 
-#add parameter with options n,s,m,l for different model sizes and change project path
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", help="model size", default="n")

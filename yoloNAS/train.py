@@ -38,7 +38,7 @@ val_labels_dir = '../data/val/labels'
 checkpoint_dir = '../checkpoints'
 test_imgs_dir = '../data/test/images'
 test_labels_dir = '../data/test/labels'
-classes = ['Deer', 'Roe Deer', 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep' ]
+classes = ['Deer', 'Roe Deer' ] #, 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep'
 
 dataset_params = {
     'data_dir':ROOT_DIR,
@@ -95,6 +95,8 @@ test_data = coco_detection_yolo_format_val(
     }
 )
 
+
+
 train_params = {
     'silent_mode': False,   #controls whether the training process will display information and progress updates
     "average_best_models":True,   #average the parameters of the best models
@@ -104,7 +106,7 @@ train_params = {
     "lr_warmup_epochs": 3,
     "initial_lr": 5e-4,
     "lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
-    "cosine_final_lr_ratio": 0.03,   #ratio of the final learning rate to the initial learning rate ---- 0.1 before
+    "cosine_final_lr_ratio": 0.1,   #ratio of the final learning rate to the initial learning rate
         
 
     # "initial_lr": 0.1,
@@ -176,21 +178,10 @@ model = models.get(
     pretrained_weights="coco") #.to(DEVICE)
 
 
-# trainer.train(
-#     model=model,
-#     training_params=train_params,
-#     train_loader=train_data,
-#     valid_loader=val_data,
-#     test_loaders={"TestSet": test_data}
-# )
-
-
-
-#CONFIDENCE_TRESHOLD = 0.35
-#image = "./data/train/images/DJI_20221025074204_0001_T_809_Rotwild.png"
-#result = list(model.predict(image, conf=CONFIDENCE_TRESHOLD))[0]
-
-
-
-
-
+trainer.train(
+    model=model,
+    training_params=train_params,
+    train_loader=train_data,
+    valid_loader=val_data,
+    test_loaders={"TestSet": test_data}
+)

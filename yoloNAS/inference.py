@@ -22,9 +22,9 @@ def main():
 
     model_path = "../inference_model" + "/" + os.listdir("../inference_model")[0]
     input_folder = "../data/test/images"
-    output_folder = "../inference_output"
+    output_folder = "../inference_output/nas"
     MODEL_ARCH = "yolo_nas_l"
-    classes = ['Deer', 'Roe Deer', 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep' ]
+    classes = ['Deer', 'Roe Deer', ] # 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep'
 
 
     # Load the trained model
