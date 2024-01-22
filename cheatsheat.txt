@@ -1,0 +1,17 @@
+Container
+(YoloNAS)
+nvidia-docker run --gpus "device=3" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YAD --name yad3 deciai/super-gradients:3.0.7
+(YoloV8)
+nvidia-docker run --gpus "device=5" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace --name yv8_5 ultralytics/ultralytics:latest
+(YoloNAS-ultralytics)
+nvidia-docker run --gpus "device=4" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YNU --name ynu_4 ultralytics/ultralytics:latest
+
+
+tensorboard --logdir Tensorboards
+
+
+yolo task=detect mode=train model=yolov8n.pt data=/nfs/volume-622-1/lanzhixiong/project/smoking/code/yolov8/helmet640.yaml device=0 --config-name=helmethyp.yaml --config-path=/nfs/volume-622-1/lanzhixiong/project/smoking/code/yolov8
+
+Ultalytics cfg: usr/src/ultralytics/ultralytics/cfg/default.yaml
+yolo train --cfg custom_model.yaml
+yolo detect train data="data.yaml" model=yolov8n.pt epochs=3 cfg=conf.yaml           #imgsz=640

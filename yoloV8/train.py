@@ -7,7 +7,7 @@ from ultralytics import YOLO
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", help="model size", default="n")
-parser.add_argument("--epochs", help="number of epochs", default=2)
+parser.add_argument("--epochs", help="number of epochs", default=5)
 args = parser.parse_args()
 
 
@@ -27,7 +27,8 @@ else:
 model = YOLO(model_name + '.pt')
 
 results = model.train(
-    data='yoloV8.yaml', 
+    data='data.yaml',
+    cfg='conf.yaml', 
     batch=8, 
     epochs=int(args.epochs),
     imgsz=640, 
