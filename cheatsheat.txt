@@ -1,8 +1,8 @@
 Container
 (YoloNAS)
-nvidia-docker run --gpus "device=3" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YAD --name yad3 deciai/super-gradients:3.0.7
+nvidia-docker run --gpus "device=3" -it -v "$(pwd)":/workspace/YAD --name yad3 deciai/super-gradients:3.0.7; pip install -r requirements.txt
 (YoloV8)
-nvidia-docker run --gpus "device=5" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace --name yv8_5 ultralytics/ultralytics:latest
+nvidia-docker run --gpus "device=5" -it -v "$(pwd)":/workspace --name yv8_5 ultralytics/ultralytics:latest; pip uninstall albumentations
 (YoloNAS-ultralytics)
 nvidia-docker run --gpus "device=4" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YNU --name ynu_4 ultralytics/ultralytics:latest
 
@@ -15,3 +15,5 @@ yolo task=detect mode=train model=yolov8n.pt data=/nfs/volume-622-1/lanzhixiong/
 Ultalytics cfg: usr/src/ultralytics/ultralytics/cfg/default.yaml
 yolo train --cfg custom_model.yaml
 yolo detect train data="data.yaml" model=yolov8n.pt epochs=3 cfg=conf.yaml           #imgsz=640
+
+curl -L "https://app.roboflow.com/ds/PPlEJdQa2Q?key=3aGUKb2d3Q" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip

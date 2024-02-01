@@ -1,9 +1,10 @@
 data
+dataDeer
+inference_output
+results
 checkpoints
 *.jpg
 *.png
 *.pt
 *.pth
 runs
-/allData/*
-!/allData/split.py

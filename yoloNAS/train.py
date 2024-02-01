@@ -17,7 +17,9 @@ import glob
 import numpy as np
 import random
 import argparse
+import warnings
 
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 parser = argparse.ArgumentParser(description="Add Epochs as a parameter!",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -30,15 +32,20 @@ init_trainer()
 #setup_device("gpu")
 setup_gpu(num_gpus=1)
 
+dataset = 'dataDeer'
+
 ROOT_DIR = ''
-train_imgs_dir = '../data/train/images'
-train_labels_dir = '../data/train/labels'
-val_imgs_dir = '../data/val/images'
-val_labels_dir = '../data/val/labels'
-checkpoint_dir = '../checkpoints'
-test_imgs_dir = '../data/test/images'
-test_labels_dir = '../data/test/labels'
+train_imgs_dir = f'../{dataset}/train/images'
+train_labels_dir = f'../{dataset}/train/labels'
+val_imgs_dir = f'../{dataset}/valid/images'
+val_labels_dir = f'../{dataset}/valid/labels'
+checkpoint_dir = 'runs'
+test_imgs_dir = f'../{dataset}/test/images'
+test_labels_dir = f'../{dataset}/test/labels'
 classes = ['Deer', 'Roe Deer' ] #, 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep'
+
+
+
 
 dataset_params = {
     'data_dir':ROOT_DIR,
@@ -96,11 +103,9 @@ test_data = coco_detection_yolo_format_val(
 )
 
 
-
 train_params = {
     'silent_mode': False,   #controls whether the training process will display information and progress updates
     "average_best_models":True,   #average the parameters of the best models
-
     "warmup_mode": "linear_epoch_step",
     "warmup_initial_lr": 1e-6,   # increasing the learning rate over a specified number of epochs
     "lr_warmup_epochs": 3,
@@ -108,12 +113,10 @@ train_params = {
     "lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
     "cosine_final_lr_ratio": 0.1,   #ratio of the final learning rate to the initial learning rate
         
-
     # "initial_lr": 0.1,
     # "lr_mode":"StepLRScheduler",
     # "lr_updates": [100, 150, 200],
     # "lr_decay_factor": 0.1,
-
     # "lr_mode": "StepLRScheduler",
     # "step_lr_update_freq": 2.4,
     # "initial_lr": 0.016,
@@ -163,9 +166,10 @@ train_params = {
 }
 
 #DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-MODEL_ARCH = 'yolo_nas_s'
-#            'yolo_nas_m'
-#            'yolo_nas_l'
+
+#MODEL_ARCH = 'yolo_nas_s'
+#MODEL_ARCH = 'yolo_nas_m'
+MODEL_ARCH = 'yolo_nas_l'
 
 trainer = Trainer(
     experiment_name=MODEL_ARCH,

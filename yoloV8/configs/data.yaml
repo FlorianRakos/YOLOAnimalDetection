@@ -1,19 +1,15 @@
 # Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
 path:  ../../../workspace/yoloV8 # dataset root dir
 train: ../data/train/images  # train images (relative to 'path') 128 images
-val: ../data/val/images  # val images (relative to 'path') 128 images
+val: ../data/valid/images  # val images (relative to 'path') 128 images
 test: ../data/test/images # test images (optional)
 
-# Classes
+
+
 names:
   0: Deer
-  1: Roe Deer
-  2: Chamois
-  3: Wild Boar
-  4: Rabbit
-  5: Horse
-  6: Sika Deer
-  7: Buffalo
-  8: Sheep
-  9: Fallow Deer
-
+  1: Fallow Deer
+  2: Horse
+  3: Rabbit
+  4: Roe deer
+  5: Wild Boar
