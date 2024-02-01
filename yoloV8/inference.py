@@ -1,31 +1,22 @@
 import ultralytics
-ultralytics.checks()
-
 from ultralytics import YOLO
+import subprocess
 
-model = YOLO('runs/yolov8l/train/weights/best.pt')
+model_used = "s"
 
-model.predict(source='../data/test/images', save=True , conf=0.7, line_width=1) #imgsz=640
+ultralytics.checks()
+model = YOLO(f'../results/v8_{model_used}_1/weights/best.pt')
 
+model.val(data='configs/dataDeerTest.yaml')
+model.predict(source='../dataDeer/test/images', save=True, save_txt=True, save_conf=True , conf=0.7, line_width=1) #imgsz=640
 
-# from ultralytics import YOLO
-# import cv2
-# import os
+src_inf= "/usr/src/ultralytics/runs/detect/predict"
+dest_inf = f"/workspace/inference_output/v8/{model_used}"
+cmd_inf = f"mv {src_inf} {dest_inf}"
 
+src_val = "/usr/src/ultralytics/runs/detect/val"
+dest_val = f"/workspace/inference_output/v8/{model_used}"
+cmd_val = f"mv {src_val} {dest_val}"
 
-# results = model('https://ultralytics.com/images/bus.jpg')
-# img = cv2.imread('bus.jpg')
-
-# path = "another_folder"
-# if not os.path.exists(path):
-#     os.mkdir(path)
-
-# for result in results:
-#     boxes = result.boxes.cpu().numpy()
-#     for i, box in enumerate(boxes):
-#         r = box.xyxy[0].astype(int)
-#         crop = img[r[1]:r[3], r[0]:r[2]]
-#         filename = str(i) + ".jpg"
-#         if (box.conf[0] > 0.5):
-#             filename = os.path.join(path, filename)
-#         cv2.imwrite(filename, crop)
+subprocess.run(cmd_inf, shell=True)
+subprocess.run(cmd_val, shell=True)
