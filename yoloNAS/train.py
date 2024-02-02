@@ -6,7 +6,6 @@ from super_gradients.training.losses import PPYoloELoss
 from super_gradients.training.metrics import DetectionMetrics_050, DetectionMetrics_050_095
 from super_gradients.training.utils.distributed_training_utils import setup_gpu
 from super_gradients.training.models.detection_models.pp_yolo_e import PPYoloEPostPredictionCallback
-
 from tqdm.auto import tqdm
 import os
 import requests
@@ -21,18 +20,31 @@ import warnings
 
 warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
-parser = argparse.ArgumentParser(description="Add Epochs as a parameter!",
+
+parser = argparse.ArgumentParser(description="Train a model",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-e", "--epochs",  help="add number of epochs")
+parser.add_argument("-m", "--model",  help="add model architecture")
 args = parser.parse_args()
 config = vars(args)
 
 
-init_trainer()
-#setup_device("gpu")
-setup_gpu(num_gpus=1)
+if (args.model == 'm'):
+    MODEL_ARCH = 'yolo_nas_m'
+    WORKERS = 8
+elif (args.model == 'l'):
+    MODEL_ARCH = 'yolo_nas_l'
+    WORKERS = 6
+else:
+    MODEL_ARCH = 'yolo_nas_s'
+    WORKERS = 12
 
 dataset = 'dataDeer'
+
+
+
+init_trainer()
+setup_gpu(num_gpus=1)
 
 ROOT_DIR = ''
 train_imgs_dir = f'../{dataset}/train/images'
@@ -43,8 +55,6 @@ checkpoint_dir = 'runs'
 test_imgs_dir = f'../{dataset}/test/images'
 test_labels_dir = f'../{dataset}/test/labels'
 classes = ['Deer', 'Roe Deer' ] #, 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep'
-
-
 
 
 dataset_params = {
@@ -61,7 +71,7 @@ dataset_params = {
 # Global parameters.
 EPOCHS = int(args.epochs)
 BATCH_SIZE = 32
-WORKERS = 4
+
 
 train_data = coco_detection_yolo_format_train(
     dataset_params={
@@ -107,11 +117,11 @@ train_params = {
     'silent_mode': False,   #controls whether the training process will display information and progress updates
     "average_best_models":True,   #average the parameters of the best models
     "warmup_mode": "linear_epoch_step",
-    "warmup_initial_lr": 1e-6,   # increasing the learning rate over a specified number of epochs
+    "warmup_initial_lr": 5e-7, #1e-6   # increasing the learning rate over a specified number of epochs
     "lr_warmup_epochs": 3,
-    "initial_lr": 5e-4,
+    "initial_lr": 5e-5, # 5e-4,
     "lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
-    "cosine_final_lr_ratio": 0.1,   #ratio of the final learning rate to the initial learning rate
+    "cosine_final_lr_ratio": 0.05, #0.1  #ratio of the final learning rate to the initial learning rate
         
     # "initial_lr": 0.1,
     # "lr_mode":"StepLRScheduler",
@@ -166,10 +176,6 @@ train_params = {
 }
 
 #DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-#MODEL_ARCH = 'yolo_nas_s'
-#MODEL_ARCH = 'yolo_nas_m'
-MODEL_ARCH = 'yolo_nas_l'
 
 trainer = Trainer(
     experiment_name=MODEL_ARCH,
