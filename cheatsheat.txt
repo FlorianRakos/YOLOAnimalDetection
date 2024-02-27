@@ -1,19 +1,19 @@
-Container
+- Container Commands
+
 (YoloNAS)
-nvidia-docker run --gpus "device=3" -it -v "$(pwd)":/workspace/YAD --name yad3 deciai/super-gradients:3.0.7; pip install -r requirements.txt
+nvidia-docker run --shm-size 4G --gpus "device=3" -it -v "$(pwd)":/workspace/YAD --name yad3 deciai/super-gradients:3.0.7; pip install -r requirements.txt
+
 (YoloV8)
 nvidia-docker run --gpus "device=5" -it -v "$(pwd)":/workspace --name yv8_5 ultralytics/ultralytics:latest; pip uninstall albumentations
-(YoloNAS-ultralytics)
-nvidia-docker run --gpus "device=4" -it --rm -v "$(pwd)"/YOLOAnimalDetection:/workspace/YNU --name ynu_4 ultralytics/ultralytics:latest
 
 
+- Other
+
+(Display tensorboard files)
 tensorboard --logdir Tensorboards
 
+(Ultalytics cfg location)
+usr/src/ultralytics/ultralytics/cfg/default.yaml
 
-yolo task=detect mode=train model=yolov8n.pt data=/nfs/volume-622-1/lanzhixiong/project/smoking/code/yolov8/helmet640.yaml device=0 --config-name=helmethyp.yaml --config-path=/nfs/volume-622-1/lanzhixiong/project/smoking/code/yolov8
-
-Ultalytics cfg: usr/src/ultralytics/ultralytics/cfg/default.yaml
-yolo train --cfg custom_model.yaml
-yolo detect train data="data.yaml" model=yolov8n.pt epochs=3 cfg=conf.yaml           #imgsz=640
-
+(Download Dataset from Roboflow)
 curl -L "https://app.roboflow.com/ds/PPlEJdQa2Q?key=3aGUKb2d3Q" > roboflow.zip; unzip roboflow.zip; rm roboflow.zip
