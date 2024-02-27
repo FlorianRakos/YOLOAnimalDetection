@@ -1,10 +1,14 @@
 data
 dataDeer
 inference_output
-results
+results/*
+!/results/all/v8_m_1
 checkpoints
 *.jpg
 *.png
-*.pt
 *.pth
 runs
+yoloV8/yolov8l.pt
+yoloV8/yolov8m.pt
+yoloV8/yolov8n.pt
+yoloV8/yolov8s.pt
