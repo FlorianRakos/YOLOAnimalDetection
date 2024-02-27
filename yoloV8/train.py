@@ -27,7 +27,7 @@ else:
 model = YOLO(model_name + '.pt')
 
 results = model.train(
-    data='configs/dataDeer.yaml',
+    data='configs/data.yaml',
     cfg='configs/no_aug.yaml', 
     batch=8, 
     epochs=int(args.epochs),

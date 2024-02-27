@@ -23,7 +23,7 @@ warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 parser = argparse.ArgumentParser(description="Train a model",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("-e", "--epochs",  help="add number of epochs")
+parser.add_argument("-e", "--epochs",  help="add number of epochs", default=300)
 parser.add_argument("-m", "--model",  help="add model architecture")
 args = parser.parse_args()
 config = vars(args)
@@ -39,8 +39,14 @@ else:
     MODEL_ARCH = 'yolo_nas_s'
     WORKERS = 12
 
-dataset = 'dataDeer'
 
+dataset = 'data'
+if dataset == 'data':
+    classes = ['Deer', 'Fallow Deer', 'Horse', 'Rabbit', 'Roe Deer', 'Wild Boar']
+elif dataset == 'dataDeer':
+    classes = ['Deer', 'Roe Deer']
+else:
+    print('Error: No valid dataset found')
 
 
 init_trainer()
@@ -54,7 +60,11 @@ val_labels_dir = f'../{dataset}/valid/labels'
 checkpoint_dir = 'runs'
 test_imgs_dir = f'../{dataset}/test/images'
 test_labels_dir = f'../{dataset}/test/labels'
-classes = ['Deer', 'Roe Deer' ] #, 'Chamois', 'Wild Boar', 'Rabbit', 'Horse', 'Sika Deer', 'Buffalo','Sheep'
+
+
+
+
+
 
 
 dataset_params = {
@@ -117,22 +127,11 @@ train_params = {
     'silent_mode': False,   #controls whether the training process will display information and progress updates
     "average_best_models":True,   #average the parameters of the best models
     "warmup_mode": "linear_epoch_step",
-    "warmup_initial_lr": 5e-7, #1e-6   # increasing the learning rate over a specified number of epochs
+    "warmup_initial_lr": 1e-6, #5e-7, #   # increasing the learning rate over a specified number of epochs
     "lr_warmup_epochs": 3,
-    "initial_lr": 5e-5, # 5e-4,
+    "initial_lr": 5e-4, # 5e-5,
     "lr_mode": "cosine",   #learning rate follows a cosine function's curve throughout the training process
-    "cosine_final_lr_ratio": 0.05, #0.1  #ratio of the final learning rate to the initial learning rate
-        
-    # "initial_lr": 0.1,
-    # "lr_mode":"StepLRScheduler",
-    # "lr_updates": [100, 150, 200],
-    # "lr_decay_factor": 0.1,
-    # "lr_mode": "StepLRScheduler",
-    # "step_lr_update_freq": 2.4,
-    # "initial_lr": 0.016,
-    # "lr_warmup_epochs": 3,
-    # "warmup_initial_lr": 1e-6,
-    # "lr_decay_factor": 0.97,
+    "cosine_final_lr_ratio": 0.1, #0.05,   #ratio of the final learning rate to the initial learning rate
 
     "optimizer": "Adam",
     "optimizer_params": {"weight_decay": 0.0001},   #prevent overfitting by penalizing large weights
@@ -172,7 +171,8 @@ train_params = {
             )
         )
     ],
-    "metric_to_watch": 'mAP@0.50:0.95'
+    "metric_to_watch": 'mAP@0.50:0.95'#"metric_to_watch": 'mAP@0.50'
+    
 }
 
 #DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
